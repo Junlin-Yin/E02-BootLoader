@@ -49,20 +49,20 @@ int main( void )
 	{
 		printf( "Please input command: " );
 		scanf( "%s", uchar );
-		printf( "%s\r\n", uchar );
+		printf( "\r\n" );
 
 		if ( strcmp( uchar, "peek" ) == 0 )
 		{
 			printf( "Please input address: " );
 			scanf( "%x", &address );
-			printf( "%x\r\n", address );
+			printf( "\r\n");
 			printf( "Peek result: 0x%08x\r\n", *( (uint32_t *)address ) );
 		}
 		else if ( strcmp( uchar, "poke" ) == 0 )
 		{
 			printf( "Please input address: " );
 			scanf( "%x", &address );
-			printf( "%x\r\n", address );
+			printf( "\r\n");
 			if ( address < vaildAddressDown || address > vaildAddressUp )
 			{
 				printf( "Invaild address\r\n" );
