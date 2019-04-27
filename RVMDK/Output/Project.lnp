@@ -1,10 +1,8 @@
 --cpu Cortex-M3
 ".\output\main.o"
 ".\output\stm32f10x_it.o"
-".\output\upload.o"
 ".\output\ymodem.o"
 ".\output\common.o"
-".\output\download.o"
 ".\output\misc.o"
 ".\output\stm32f10x_adc.o"
 ".\output\stm32f10x_bkp.o"

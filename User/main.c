@@ -31,8 +31,7 @@
 #define LED2 GPIO_Pin_2
 #define LED3 GPIO_Pin_3
 /* 变量 ----------------------------------------------------------------------*/
-extern pFunction Jump_To_Application;
-extern uint32_t JumpAddress;
+typedef  void (*pFunction)(void);
 
 /* 函数声明 ------------------------------------------------------------------*/
 void Delay( __IO uint32_t nCount );
@@ -66,18 +65,14 @@ int fgetc( FILE *stream )
 int main( void )
 {
 	uint32_t address, data;
+	uint32_t JumpAddress;
+	pFunction Jump_To_Application;
 	char uchar[ 15 ] = { 0 };
 	uint32_t vaildAddressDown = 0x20000000;
 	uint32_t vaildAddressUp = 0x20000000 + 0x5000;
 
-	//Flash 解锁
-	//FLASH_Unlock();
-	//LED_Configuration();
-	//配置按键
-	//KEY_Configuration();
+	LED_Configuration();
 	IAP_Init();
-	
-	
 	printf( "Peek and poke test\r\n" );
 
 	while ( 1 )
@@ -91,11 +86,6 @@ int main( void )
 			printf( "Please input address: " );
 			scanf( "%x", &address );
 			printf( "%x\r\n", address );
-			if ( address < vaildAddressDown || address > vaildAddressUp )
-			{
-				printf( "Invaild address, the vaild range is [0x20000000, 0x20005000]\r\n" );
-				continue;
-			}
 			printf( "Peek result: 0x%08x\r\n", *( (uint32_t *)address ) );
 		}
 		else if ( strcmp( uchar, "poke" ) == 0 )
@@ -118,100 +108,32 @@ int main( void )
 		{
 			printf( "Please input address: " );
 			scanf( "%x", &address );
-			printf( "%x\r\n", address );
+			printf( "\r\n" );
 			if ( address < vaildAddressDown || address > vaildAddressUp )
 			{
 				printf( "Invaild address\r\n" );
 				continue;
 			}
-			SerialDownload(  );
+			SerialDownload(address);
 		}
 		else if ( strcmp( uchar, "run" ) == 0 )
 		{
+			printf( "Please input address: " );
+			scanf( "%x", &address );
+			printf( "\r\n\n" );
+			JumpAddress = *(__IO uint32_t *)( address+4 );
+
+			//跳转到用户程序
+			Jump_To_Application = (pFunction)JumpAddress;
+			//初始化用户程序的堆栈指针
+			__set_MSP( *(__IO uint32_t *)address );
+			Jump_To_Application();
 		}
 		else
 		{
 			printf( "Invaild command\r\n" );
 		}
 	}
-	
-	//Main_Menu();
-	/*
-	//按键是否按下
-	if ( GPIO_ReadInputDataBit( GPIOC, GPIO_Pin_5 ) == 0x00 )
-	{
-	// 	//假如USER1按键按下
-	// 	//执行IAP驱动程序更新Flash程序
-
-	 	//printf( "Peek and poke test\r\n" );
-		
-	 	Main_Menu();
-	 }
-	// //否则执行用户程序
-	 else
-	 {
-	 	//判断用户是否已经下载程序，因为正常情况下此地址是栈地址。
-	 	//若没有这一句的话，即使没有下载程序也会进入而导致跑飞。
-	 	if ( ( ( *(__IO uint32_t *)ApplicationAddress ) & 0x2FFE0000 ) == 0x20000000 )
-	 	{
-	 		SerialPutString( "Execute user Program\r\n\n" );
-	 		//跳转至用户代码
-	 		JumpAddress = *(__IO uint32_t *)( ApplicationAddress + 4 );
-	 		Jump_To_Application = (pFunction)JumpAddress;
-
-	// 		//初始化用户程序的堆栈指针
-	 		__set_MSP( *(__IO uint32_t *)ApplicationAddress );
-	 		Jump_To_Application();
-	 	}
-	 	else
-	 	{
-	 		SerialPutString( "no user Program\r\n\n" );
-	 	}
-	 }
-	*/
-
-	/*
-	printf( "Peek and poke test\r\n" );
-	while ( 1 )
-	{
-		printf( "Please input command: " );
-		scanf( "%s", uchar );
-		printf( "%s\r\n", uchar );
-
-		if ( strcmp( uchar, "peek" ) == 0 )
-		{
-			printf( "Please input address: " );
-			scanf( "%x", &address );
-			printf( "%x\r\n", address );
-			if ( address < vaildAddressDown || address > vaildAddressUp )
-			{
-				printf( "Invaild address, the vaild range is [0x20000000, 0x20005000]\r\n" );
-				continue;
-			}
-			printf( "Peek result: 0x%08x\r\n", *( (uint32_t *)address ) );
-		}
-		else if ( strcmp( uchar, "poke" ) == 0 )
-		{
-			printf( "Please input address: " );
-			scanf( "%x", &address );
-			printf( "%x\r\n", address );
-			if ( address < vaildAddressDown || address > vaildAddressUp )
-			{
-				printf( "Invaild address\r\n" );
-				continue;
-			}
-			printf( "Please input data: " );
-			scanf( "%x", &data );
-			printf( "%x\r\n", data );
-			*( (uint32_t *)address ) = data;
-			printf( "Poke success\r\n" );
-		}
-		else
-		{
-			printf( "Invaild command\r\n" );
-		}
-	}
-	*/
 }
 
 /*******************************************************************************
