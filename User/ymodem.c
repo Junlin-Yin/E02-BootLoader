@@ -128,12 +128,12 @@ static int32_t Receive_Packet( uint8_t *data, int32_t *length, uint32_t timeout 
   * @输出参数   无
   * @返回参数   文件长度
 *******************************************************************************/
-int32_t Ymodem_Receive( uint8_t * buf )
+int32_t Ymodem_Receive( uint8_t * buf , uint32_t address)
 {
 	uint8_t packet_data[ PACKET_1K_SIZE + PACKET_OVERHEAD ], *ptr;
 	int32_t packet_length, session_done, file_done, packets_received, errors, session_begin;
 
-	 buf = (uint8_t *)0x20001000;
+	 buf = (uint8_t *)address;
 
 	//uint8_t * buf = (uint8_t *)0x20001000;
 	for ( session_done = 0, errors = 0, session_begin = 0;; )

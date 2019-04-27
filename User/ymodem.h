@@ -41,7 +41,7 @@
 #define MAX_ERRORS              (5)
 
 /* º¯ÊıÉùÃ÷ ------------------------------------------------------------------*/
-int32_t Ymodem_Receive( uint8_t *  );
+int32_t Ymodem_Receive( uint8_t * , uint32_t );
 uint8_t Ymodem_Transmit (uint8_t *,const  uint8_t* , uint32_t );
 
 #endif  /* _YMODEM_H_ */
